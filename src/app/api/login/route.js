@@ -1,3 +1,4 @@
+'use server'
 export async function GET(req, res) {
 
     console.log("In Login api")
