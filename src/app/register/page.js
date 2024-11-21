@@ -19,7 +19,7 @@ export default function Home() {
     let passwordConfirm = data.get("passwordConfirm");
     let phonenum = data.get("phonenum");
 
-    runDBCallAsync(`../api/register?email=${email}&emailconfirm=${emailConfirm}&password=${password}&passwordconfirm=${passwordConfirm}&phonenum=${phonenum}`);
+    runDBCallAsync(`/api/register?email=${email}&emailconfirm=${emailConfirm}&password=${password}&passwordconfirm=${passwordConfirm}&phonenum=${phonenum}`);
   }
 
   async function runDBCallAsync(url) {
