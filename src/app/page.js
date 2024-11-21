@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
+  const [username, setusername] = useState(null);
+  const [password, setpassword] = useState(null);
+
   const handleSubmit = (e) => {
     console.log("login");
     e.preventDefault();
@@ -18,7 +21,8 @@ export default function Home() {
   async function runDBCallAsync(url) {
     const res = await fetch(url);
     const data = await res.json();
-    if (data.data == "valid") {
+
+    if (data.data == "valid" && data.password == "valid") {
       console.log("Login Success");
     }
     else {

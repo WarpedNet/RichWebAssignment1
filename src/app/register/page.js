@@ -1,11 +1,14 @@
 'use client'
 import * as React from 'react';
-import { Label } from "@mui/icons-material";
+import { useState } from 'react';
 import { Box, Button, ButtonGroup, FormControl, FormLabel, TextField } from "@mui/material";
 import { useRouter } from 'next/navigation';
+import { Snackbar } from '@mui/base/Snackbar';
 
 export default function Home() {
   const router = useRouter();
+  const [registration, setregistration] = useState(null);
+
   const handleSubmit = (e) => {
     console.log("login");
     e.preventDefault();
@@ -15,18 +18,18 @@ export default function Home() {
     let password = data.get("password");
     let passwordConfirm = data.get("passwordConfirm");
     let phonenum = data.get("phonenum");
-  
+
     runDBCallAsync(`../api/register?email=${email}&emailconfirm=${emailConfirm}&password=${password}&passwordconfirm=${passwordConfirm}&phonenum=${phonenum}`);
   }
 
   async function runDBCallAsync(url) {
     const res = await fetch(url);
     const data = await res.json();
-    if (data.data == "valid") {
-      console.log("Login Success");
+    if (data.data != "valid") {
+      setregistration(true);
     }
     else {
-      console.log("Login Invalid");
+      setregistration(false);
     }
   }
 
@@ -46,7 +49,9 @@ export default function Home() {
           <Button sx={{color: "#41521fff", fontSize: "1em", fontWeight: "bold", borderColor:"#a63d40ff"}} onClick={() => {router.push("..")}}>Login</Button>
           <Button sx={{color: "#a63d40ff", fontSize: "1em", fontWeight: "bold", borderColor:"#41521fff"}} type="submit">Register</Button>
         </ButtonGroup>
+
       </FormControl>
     </Box>
+    
   );
 }

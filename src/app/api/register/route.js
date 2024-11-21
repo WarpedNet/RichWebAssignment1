@@ -8,10 +8,37 @@ export async function GET(req, res) {
     const password = searchParams.get('password');
     const passwordConfirm = searchParams.get('passwordconfirm');
     const phonenum = searchParams.get('phonenum');
-    console.log(email);
-    console.log(emailconfirm);
-    console.log(password);
-    console.log(passwordConfirm);
-    console.log(phonenum);
-    return Response.json({ "data":"valid" })
+
+    if (email != emailconfirm || password != passwordConfirm) {
+        return Response.json({ "data":"Invalid"})
+    }
+
+    const url = process.env.DB_ADDRESS
+    const {MongoClient} = require("mongodb");
+    const client = new MongoClient(url);
+
+    await client.connect();
+    console.log("Connected to Database");
+    const db = client.db("krispykreme");
+    const collection = db.collection("users");
+
+    // Hashing password & inserting data into database
+    const bcrypt = require('bcrypt');
+    bcrypt.hash(password, 10, function(err, hash) {
+        const insert = collection.insertOne({
+            "email": email,
+            "passwordhash": hash,
+            "phonenum": phonenum
+        })
+        if (insert) {
+            return Response.json({ "data":"valid", "registration":"valid" })
+        }
+        else {
+            return Response.json({ "data":"valid", "registration":"invalid"})
+        }
+
+    })
+
+
+    return Response.json({ "data":"Invalid" })
 }
