@@ -1,5 +1,7 @@
 'use server'
 import { getSession } from "../session.js";
+import { redirect } from 'next/navigation';
+
 export async function GET(req, res) {
 
     console.log("In Register api")
@@ -39,7 +41,7 @@ export async function GET(req, res) {
             session.isLoggedIn = true;
             session.role = "customer";
             session.save();
-            // redirect()
+            redirect("/customer");
             return Response.json({ "data":"valid", "registration":"valid" })
         }
         else {

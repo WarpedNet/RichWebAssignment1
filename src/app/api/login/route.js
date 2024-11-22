@@ -1,5 +1,7 @@
 'use server'
 import { getSession } from "../session.js";
+import { redirect } from 'next/navigation';
+
 export async function GET(req, res) {
 
     console.log("In Login api")
