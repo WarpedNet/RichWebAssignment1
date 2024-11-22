@@ -1,6 +1,5 @@
 'use server'
 import { getSession } from "../session.js";
-import { redirect } from 'next/navigation';
 
 export async function GET(req, res) {
 
@@ -38,16 +37,10 @@ export async function GET(req, res) {
             let role = dbLookup["role"];
             session.role = role;
             session.save();
-            if (role == "customer") {
-                redirect("../../customer");
-            }
-            else if (role == "manager") {
-                redirect("../../manager");
-            }
             // else {
                 // Redirect to error page...
             // }
-            return Response.json({ "data":"valid", "password":"valid"});
+            return Response.json({ "data":"valid", "password":"valid", "role":role});
         }
         else {
             return Response.json({ "data":"valid", "password":"invalid" });
