@@ -1,3 +1,4 @@
+'use server'
 import { getSession } from "../session";
 
 export default function checklogin() {
