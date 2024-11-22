@@ -7,8 +7,6 @@ import { useState } from 'react';
 
 export default function Home() {
   const router = useRouter();
-  const [username, setusername] = useState(null);
-  const [password, setpassword] = useState(null);
 
   const handleSubmit = (e) => {
     console.log("login");

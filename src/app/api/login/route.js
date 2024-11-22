@@ -1,4 +1,5 @@
 'use server'
+import { getSession } from "../session.js";
 export async function GET(req, res) {
 
     console.log("In Login api")
@@ -20,7 +21,7 @@ export async function GET(req, res) {
     
     const dbLookup = await collection.findOne({
         "email":email
-    }, {"_id": false, "email": true, "passwordhash": true});
+    }, {"_id": false, "email": true, "passwordhash": true, "role":true});
 
     if (dbLookup["passwordhash"]) {
         const bcrypt = require('bcrypt');
@@ -28,7 +29,22 @@ export async function GET(req, res) {
         const match = await bcrypt.compare(password, dbLookup["passwordhash"]);
         console.log(dbLookup["passwordhash"]);
         if (match) {
-            console.log("Logged in!")
+
+            let session = await getSession();
+            session.email = email;
+            session.isLoggedIn = true;
+            let role = dbLookup["role"];
+            session.role = role;
+            session.save();
+            if (role == "customer") {
+                redirect("/customer");
+            }
+            else if (role == "manager") {
+                redirect("/manager");
+            }
+            // else {
+                // Redirect to error page...
+            // }
             return Response.json({ "data":"valid", "password":"valid"});
         }
         else {
