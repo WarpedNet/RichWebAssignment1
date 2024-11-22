@@ -1,10 +1,11 @@
+'use client';
 import { getSession } from "../api/session.js";
-import { useRouter } from "next/router.js";
+import { useRouter } from 'next/navigation';
 import { Box } from "@mui/material";
 
 export default function customer (){
     let session = getSession();
-    const router = useRouter()
+    const router = useRouter();
     if (session.isLoggedIn) {
         return (
             <Box>
