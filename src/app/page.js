@@ -22,10 +22,10 @@ export default function Home() {
     const data = await res.json();
 
     if (data.data == "valid" && data.password == "valid" && data.role == "customer") {
-      router.push("/customer");
+      router.push("../customer");
     }
     else if (data.data == "valid" && data.password == "valid" && data.role == "manager"){
-      router.push("/manager");
+      router.push("../manager");
     }
     else {
       console.log(data);
