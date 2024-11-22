@@ -41,7 +41,7 @@ export async function GET(req, res) {
             session.isLoggedIn = true;
             session.role = "customer";
             session.save();
-            redirect("/customer");
+            redirect("../customer");
             return Response.json({ "data":"valid", "registration":"valid" })
         }
         else {

@@ -39,10 +39,10 @@ export async function GET(req, res) {
             session.role = role;
             session.save();
             if (role == "customer") {
-                redirect("/customer");
+                redirect("../../customer");
             }
             else if (role == "manager") {
-                redirect("/manager");
+                redirect("../../manager");
             }
             // else {
                 // Redirect to error page...

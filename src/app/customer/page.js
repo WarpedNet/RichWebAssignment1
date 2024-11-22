@@ -12,7 +12,7 @@ export default function customer (){
         );
     }
     else {
-        redirect("/app");
+        redirect("..");
     }
 
 }
