@@ -28,6 +28,7 @@ export default function Home() {
       router.push("/manager");
     }
     else {
+      console.log(data);
       console.log("Incorrect Login");
     }
   }
