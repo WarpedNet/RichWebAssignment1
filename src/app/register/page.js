@@ -5,7 +5,7 @@ import { Box, Button, ButtonGroup, FormControl, FormLabel, TextField } from "@mu
 import { useRouter } from 'next/navigation';
 import { Snackbar } from '@mui/base/Snackbar';
 
-export default function Home() {
+export default function Register() {
   const router = useRouter();
   const [registration, setregistration] = useState(null);
 

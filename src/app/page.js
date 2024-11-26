@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Label } from "@mui/icons-material";
 import { Box, Button, ButtonGroup, FormControl, FormLabel, TextField } from "@mui/material";
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Home() {
@@ -25,6 +25,7 @@ export default function Home() {
 
     if (data.data == "valid" && data.password == "valid") {
       console.log("Login Success");
+      redirect("/customer");
     }
     else {
       console.log("Login Invalid");
