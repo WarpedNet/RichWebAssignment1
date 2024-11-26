@@ -7,8 +7,6 @@ import { useState } from 'react';
 
 export default function Home() {
   const router = useRouter();
-  const [username, setusername] = useState(null);
-  const [password, setpassword] = useState(null);
 
   const handleSubmit = (e) => {
     console.log("login");
@@ -23,12 +21,15 @@ export default function Home() {
     const res = await fetch(url);
     const data = await res.json();
 
-    if (data.data == "valid" && data.password == "valid") {
-      console.log("Login Success");
-      redirect("/customer");
+    if (data.data == "valid" && data.password == "valid" && data.role == "customer") {
+      router.push("../customer");
+    }
+    else if (data.data == "valid" && data.password == "valid" && data.role == "manager"){
+      router.push("../manager");
     }
     else {
-      console.log("Login Invalid");
+      console.log(data);
+      console.log("Incorrect Login");
     }
   }
   return (

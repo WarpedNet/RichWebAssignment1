@@ -1,4 +1,7 @@
 'use server'
+import { getSession } from "../session.js";
+import { redirect } from 'next/navigation';
+
 export async function GET(req, res) {
 
     console.log("In Register api")
@@ -29,9 +32,16 @@ export async function GET(req, res) {
         const insert = collection.insertOne({
             "email": email,
             "passwordhash": hash,
-            "phonenum": phonenum
+            "phonenum": phonenum,
+            "role": "customer"
         })
         if (insert) {
+            let session = getSession();
+            session.email = email;
+            session.isLoggedIn = true;
+            session.role = "customer";
+            session.save();
+            redirect("../customer");
             return Response.json({ "data":"valid", "registration":"valid" })
         }
         else {
