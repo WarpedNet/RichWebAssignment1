@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Label } from "@mui/icons-material";
 import { Box, Button, ButtonGroup, FormControl, FormLabel, TextField } from "@mui/material";
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Home() {

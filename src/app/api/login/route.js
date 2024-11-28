@@ -1,5 +1,7 @@
 'use server'
+import { revalidatePath } from "next/cache.js";
 import { getSession } from "../session.js";
+import { redirect } from "next/navigation.js";
 
 export async function GET(req, res) {
 
@@ -31,16 +33,20 @@ export async function GET(req, res) {
         console.log(dbLookup["passwordhash"]);
         if (match) {
 
-            let session = await getSession();
+            const session = await getSession();
             session.email = email;
             session.isLoggedIn = true;
-            let role = dbLookup["role"];
+            const role = dbLookup["role"];
             session.role = role;
             session.save();
-            // else {
-                // Redirect to error page...
-            // }
-            return Response.json({ "data":"valid", "password":"valid", "role":role});
+            if (role == "manager") {
+                revalidatePath("/manager/");
+                redirect("/manager/");
+            }
+            else {
+                revalidatePath("/customer/");
+                redirect('/customer/');
+            }
         }
         else {
             return Response.json({ "data":"valid", "password":"invalid" });
@@ -49,6 +55,7 @@ export async function GET(req, res) {
     else {
         return Response.json({ "data":"invalid" });
     }
+    
     
     
 }
