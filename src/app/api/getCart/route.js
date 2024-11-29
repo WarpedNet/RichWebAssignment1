@@ -8,14 +8,14 @@ export async function GET(req, res) {
     await client.connect();
     console.log('Connected successfully to server');
     const db = client.db(dbName);
-    const collection = db.collection('view_cart'); // collection name
+    const collection = db.collection('shopping_cart'); // collection name
 
-    let session = getSession();
+    let session = await getSession();
 
     const findResult = await collection.find(
         {email: session.email},
         {
-            _id:false, email:false, productID: true
+            _id:false, email:false, productName:true, productPrice:true
         }
     ).toArray();
     console.log('Found documents =>', findResult);

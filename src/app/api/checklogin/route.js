@@ -1,7 +1,7 @@
 'use server'
 import { getSession } from "../session";
 
-export async function checklogin() {
+export async function GET(req, res) {
     let session = getSession();
     if (session.isLoggedIn){
         return Response.json({"isLoggedIn": true});

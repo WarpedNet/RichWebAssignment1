@@ -18,8 +18,14 @@ export default function Cart() {
         fetch("/api/getCart")
         .then((res) => res.json())
         .then((cart) => {setcart(cart)})
-
     }, [])
+
+    async function removeFromCart(item) {
+        await fetch(`/api/removeFromCart?productName=${item.productName}&productPrice=${item.productPrice}`);
+        fetch("/api/getCart")
+        .then((res) => res.json())
+        .then((cart) => {setcart(cart)})
+    }
 
     if (!cart) {
         return (
@@ -41,7 +47,8 @@ export default function Cart() {
                 <Box sx={{width: "33vw", backgroundColor: "#a63d40ff"}}>
                     <Breadcrumbs>
                         <Link underline="hover" color="inherit" href="/">Home</Link>
-                        <Typography sx={{color: "#95b2b8ff"}}>Customer</Typography>
+                        <Link underline="hover" color="inherit" href="/customer">Customer</Link>
+                        <Typography sx={{color: "#95b2b8ff"}}>View_cart</Typography>
                     </Breadcrumbs>
                 </Box>
                 <Box sx={{width: "33vw", justifyContent:"center", backgroundColor: "#a63d40ff"}}>
@@ -51,17 +58,12 @@ export default function Cart() {
             {/* Products */}
             {
                 cart.map((item, i) => {
-                    const [product, setproduct] = useState(null);
-                    fetch(`/api/getProductFromID?productID=${item.productID}`)
-                    .then((res) => res.json())
-                    .then((product) => {setproduct(product)})
                     return (
                         <div key={i}>
-                            ID: {product._id}
                             <br></br>
-                            {product.productName}
+                            {item.productName}
                             -
-                            {product.productPrice}
+                            {item.productPrice}
                             <br></br>
                             <Button onClick={() => removeFromCart(item)}>Remove from cart</Button>
                         </div>

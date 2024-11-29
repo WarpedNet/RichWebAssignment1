@@ -23,7 +23,7 @@ export default function Customer() {
     }, [])
     
     function putInCart(item) {
-        fetch(`/api/putInCart?productID=${item._id}`);
+        fetch(`/api/putInCart?productName=${item.productName}&productPrice=${item.productPrice}`);
     }
 
     if (!products) {

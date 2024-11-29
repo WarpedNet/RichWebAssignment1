@@ -21,7 +21,7 @@ export async function GET(req, res) {
         return Response.json({"data": "invalid"});
     }
     else {
-        await cartCollection.insertOne({email: session.email, productName: productName, productPrice: productPrice});
+        await cartCollection.deleteOne({email: session.email, productName: productName, productPrice: productPrice});
         return Response.json({"data":"valid"});
     }
     
