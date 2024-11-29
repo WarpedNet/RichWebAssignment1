@@ -28,7 +28,7 @@ export async function GET(req, res) {
 
     // Hashing password & inserting data into database
     const bcrypt = require('bcrypt');
-    bcrypt.hash(password, 10, function(err, hash) {
+    bcrypt.hash(password, 10, async function(err, hash) {
         const insert = collection.insertOne({
             "email": email,
             "passwordhash": hash,
@@ -36,12 +36,12 @@ export async function GET(req, res) {
             "role": "customer"
         })
         if (insert) {
-            let session = getSession();
+            let session = await getSession();
             session.email = email;
             session.isLoggedIn = true;
             session.role = "customer";
-            session.save();
-            redirect("../customer");
+            await session.save();
+
             return Response.json({ "data":"valid", "registration":"valid" })
         }
         else {

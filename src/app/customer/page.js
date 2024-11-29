@@ -3,6 +3,7 @@ import { Label } from "@mui/icons-material";
 import Link from "@mui/material/Link";
 import { Box, Breadcrumbs, Button, Divider, Stack, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
+import { redirect } from "next/navigation";
 
 export default function Customer() {
     const [weather, setweather] = useState(0)
@@ -11,8 +12,19 @@ export default function Customer() {
     useEffect(() => {
         fetch("/api/weather")
         .then((res) => res.json())
-        .then((weather) => {setWeatherData(weather)})
+        .then((weather) => {setweather(weather)})
     }, [])
+
+    useEffect(() => {
+      fetch("/api/getProducts")
+      .then ((res) => res.json())
+      .then((products) => {setproducts(products)})
+    
+    }, [])
+    
+    function putInCart(item) {
+        fetch(`/api/putInCart?productID=${item._id}`);
+    }
 
     if (!products) {
         return (
@@ -38,7 +50,7 @@ export default function Customer() {
                     </Breadcrumbs>
                 </Box>
                 <Box sx={{width: "33vw", justifyContent:"center", backgroundColor: "#a63d40ff"}}>
-                    <h1>Cart</h1>
+                    <Button onClick={() => redirect("/view_cart")}>Cart</Button>
                 </Box>
             </Stack>
             {/* Products */}
@@ -47,11 +59,11 @@ export default function Customer() {
                     <div key={i}>
                         ID: {item._id}
                         <br></br>
-                        {item.pname}
+                        {item.productName}
                         -
-                        {item.price}
+                        {item.productPrice}
                         <br></br>
-                        <Button>Add to cart</Button>
+                        <Button onClick={() => putInCart(item)}>Add to cart</Button>
                     </div>
                 ))
             }

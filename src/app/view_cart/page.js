@@ -4,18 +4,26 @@ import Link from "@mui/material/Link";
 import { Box, Breadcrumbs, Button, Divider, Stack, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 
-export default function Manager() {
+export default function Cart() {
     const [weather, setweather] = useState(0)
-    const [orders, setorders] = useState(null)
+    const [cart, setcart] = useState(null)
+
     useEffect(() => {
         fetch("/api/weather")
         .then((res) => res.json())
-        .then((weather) => {setWeatherData(weather)})
+        .then((weather) => {setweather(weather)})
     }, [])
-    
-    if (!products) {
+
+    useEffect(() => {
+        fetch("/api/getCart")
+        .then((res) => res.json())
+        .then((cart) => {setcart(cart)})
+
+    }, [])
+
+    if (!cart) {
         return (
-            <h1>Loading Orders...</h1>
+            <h1>Loading Cart...</h1>
         )
     }
     if (!weather){
@@ -37,22 +45,28 @@ export default function Manager() {
                     </Breadcrumbs>
                 </Box>
                 <Box sx={{width: "33vw", justifyContent:"center", backgroundColor: "#a63d40ff"}}>
-                    <h1>Something idk</h1>
+                    <h1>Cart</h1>
                 </Box>
             </Stack>
             {/* Products */}
             {
-                products.map((item, i) => (
-                    <div key={i}>
-                        ID: {item._id}
-                        <br></br>
-                        {item.time}
-                        -
-                        {item.customerRef}
-                        <br></br>
-                        <Button>Add to cart</Button>
-                    </div>
-                ))
+                cart.map((item, i) => {
+                    const [product, setproduct] = useState(null);
+                    fetch(`/api/getProductFromID?productID=${item.productID}`)
+                    .then((res) => res.json())
+                    .then((product) => {setproduct(product)})
+                    return (
+                        <div key={i}>
+                            ID: {product._id}
+                            <br></br>
+                            {product.productName}
+                            -
+                            {product.productPrice}
+                            <br></br>
+                            <Button onClick={() => removeFromCart(item)}>Remove from cart</Button>
+                        </div>
+                    )
+                })
             }
         </Box>
     );

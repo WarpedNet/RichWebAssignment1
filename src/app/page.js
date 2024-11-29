@@ -2,11 +2,10 @@
 import * as React from 'react';
 import { Label } from "@mui/icons-material";
 import { Box, Button, ButtonGroup, FormControl, FormLabel, TextField } from "@mui/material";
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Home() {
-  const router = useRouter();
 
   const handleSubmit = (e) => {
     console.log("login");
@@ -15,23 +14,20 @@ export default function Home() {
     let email = data.get("email");
     let password = data.get("password");
   
-    runDBCallAsync(`/api/login?email=${email}&password=${password}`)
+    runDBCallAsync(`/api/login?email=${email}&password=${password}`);
   }
   async function runDBCallAsync(url) {
     const res = await fetch(url);
     const data = await res.json();
 
-    if (data.data == "valid" && data.password == "valid" && data.role == "customer") {
-      router.push("../customer");
-    }
-    else if (data.data == "valid" && data.password == "valid" && data.role == "manager"){
-      router.push("../manager");
+    if (data.data == "valid" && data.password == "valid" && data.role == "manager"){
+      redirect("/manager");
     }
     else {
-      console.log(data);
-      console.log("Incorrect Login");
+      redirect("/customer");
     }
   }
+  
   return (
     // Login
     <Box sx={{display: "flex", justifyContent:"center", alignItems:"center", minHeight:"100vh", backgroundColor: "#120309ff"}} component="form" onSubmit={handleSubmit}> 
@@ -42,7 +38,7 @@ export default function Home() {
         <TextField id="password" name="password" type="password" label="Password" variant="outlined" sx={{backgroundColor: "#a63d40ff"}} required/>
         <ButtonGroup color="primary" sx={{mt: "2vh"}}>
           <Button sx={{color: "#41521fff", fontSize: "1em", fontWeight: "bold", borderColor:"#a63d40ff"}} type="submit">Login</Button>
-          <Button sx={{color: "#a63d40ff", fontSize: "1em", fontWeight: "bold", borderColor:"#41521fff"}} onClick={() => router.push("/register")}>Register</Button>
+          <Button sx={{color: "#a63d40ff", fontSize: "1em", fontWeight: "bold", borderColor:"#41521fff"}} onClick={() => redirect("/register")}>Register</Button>
         </ButtonGroup>
       </FormControl>
     </Box>

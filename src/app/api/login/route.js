@@ -1,7 +1,6 @@
 'use server'
 import { revalidatePath } from "next/cache.js";
 import { getSession } from "../session.js";
-import { redirect } from "next/navigation.js";
 
 export async function GET(req, res) {
 
@@ -38,14 +37,13 @@ export async function GET(req, res) {
             session.isLoggedIn = true;
             const role = dbLookup["role"];
             session.role = role;
-            session.save();
+            await session.save();
+
             if (role == "manager") {
-                revalidatePath("/manager/");
-                redirect("/manager/");
+                return Response.json({ "data":"valid", "password":"valid", "role":"manager"});
             }
             else {
-                revalidatePath("/customer/");
-                redirect('/customer/');
+                return Response.json({ "data":"valid", "password":"valid", "role":"customer"});
             }
         }
         else {
