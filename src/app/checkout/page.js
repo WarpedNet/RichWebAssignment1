@@ -1,3 +1,4 @@
+import { Box } from "@mui/material"
 export default function checkout() {
     return (
         <Box>

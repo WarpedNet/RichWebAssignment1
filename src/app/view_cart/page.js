@@ -4,6 +4,7 @@ import Link from "@mui/material/Link";
 import { Box, Breadcrumbs, Button, Divider, Stack, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { checklogin } from "../api/checklogin/route.js";
+import { redirect } from "next/navigation.js";
 
 export default function Cart() {
     const [weather, setweather] = useState(0)
@@ -37,9 +38,7 @@ export default function Cart() {
             cart.map((item, i) => {
                 fetch(`/api/removeFromCart?productName=${item.productName}&productPrice=${item.productPrice}`);
             });
-            fetch("/api/getCart")
-            .then((res) => res.json())
-            .then((cart) => {setcart(cart)})
+            redirect("/checkout");
         }
 
     }
