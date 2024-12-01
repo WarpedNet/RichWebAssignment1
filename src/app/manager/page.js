@@ -1,7 +1,7 @@
 'use client'
 import { Label } from "@mui/icons-material";
 import Link from "@mui/material/Link";
-import { Box, Breadcrumbs, Button, Divider, Stack, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Button, Divider, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { checklogin } from "../api/checklogin/route.js";
 import { redirect } from "next/navigation.js";
@@ -55,43 +55,55 @@ export default function Manager() {
         )
     }
     return (
-        <Box>
+        <Box sx={{minHeight: "100vh", backgroundColor: "#120309ff"}}>
             {/* Top NavBar */}
-            <Stack direction="row" divider={<Divider orientation="vertical" flexItem/>} spacing={2} sx={{maxHeight: "10vh"}}>
-                <Box sx={{width: "33vw", justifyContent:"center", backgroundColor: "#a63d40ff"}}>
-                    <h1>{JSON.stringify(weather.temp)}</h1>
+            <Stack direction="row" divider={<Divider orientation="vertical" flexItem/>} spacing={2} sx={{maxHeight: "10vh", backgroundColor: "#a63d40ff"}}>
+                <Box sx={{width: "33vw", justifyContent:"center", backgroundColor: "#a63d40ff", color:"#8CB369", display:"flex", alignItems:"center"}}>
+                    <h1>Current Temperature: {JSON.stringify(weather.temp)}°C</h1>
                 </Box>
-                <Box sx={{width: "33vw", backgroundColor: "#a63d40ff"}}>
+                <Box sx={{width: "33vw", display:"flex", justifyContent:"center"}}>
                     <Breadcrumbs>
-                        <Link underline="hover" color="inherit" href="/">Home</Link>
-                        <Typography sx={{color: "#95b2b8ff"}}>Customer</Typography>
+                        <Link underline="hover" color="inherit" href="/" sx={{fontSize: "1.6em", color:"#41521fff"}}>Home</Link>
+                        <Typography sx={{color: "#95b2b8ff", fontSize: "1.6em", color:"#8CB369"}}>Orders</Typography>
                     </Breadcrumbs>
                 </Box>
-                <Box sx={{width: "33vw", justifyContent:"center", backgroundColor: "#a63d40ff"}}>
-                    <h1>Something idk</h1>
-                </Box>
+                <Box sx={{width: "33vw", display:"flex", justifyContent:"center"}}/>
             </Stack>
             {/* Products */}
-            {
-                orders.map((order, i) => (
-                    <div key={order._id}>
-                        ID: {order._id}
-                        <br></br>
-                        {order.email}
-                        {(order.order).map((product, j) => (
-                            <div key={product._id}>
-                                ItemID: {product._id}
-                                <br></br>
-                                Name: {product.productName}
-                                <br></br>
-                                Price: {product.productPrice}
-                            </div>
+            <Table>
+                <TableHead>
+                    <TableRow sx={{backgroundColor:"#41521F"}}>
+                        <TableCell sx={{fontSize:"1.4em", fontWeight:"bold", textAlign:"center", color:"#A63D40", textDecoration:"underline"}}>OrderID</TableCell>
+                        <TableCell sx={{fontSize:"1.4em", fontWeight:"bold", textAlign:"center", color:"#A63D40", textDecoration:"underline"}}>ProductID</TableCell>
+                        <TableCell sx={{fontSize:"1.4em", fontWeight:"bold", textAlign:"center", color:"#A63D40", textDecoration:"underline"}}>ProductName</TableCell>
+                        <TableCell sx={{fontSize:"1.4em", fontWeight:"bold", textAlign:"center", color:"#A63D40", textDecoration:"underline"}}>ProductPrice</TableCell>
+                        <TableCell></TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {
+                        orders.map((order, i) => (
+                                (order.order).map((product, j) => (
+                                    // <div key={product._id}>
+                                    //     ItemID: {product._id}
+                                    //     <br></br>
+                                    //     Name: {product.productName}
+                                    //     <br></br>
+                                    //     Price: {product.productPrice}
+                                    //     <Button onClick={() => removeOrder(order._id)}>Remove order</Button>
+                                    // </div>
+                                    <TableRow sx={{backgroundColor:"#41521F"}} key={j}>
+                                        <TableCell sx={{fontSize:"1.2em", textAlign:"center", color:"#95B2B8", textDecoration:"underline"}}>{order._id}</TableCell>
+                                        <TableCell sx={{fontSize:"1.2em", textAlign:"center", color:"#95B2B8", textDecoration:"underline"}}>{product._id}</TableCell>
+                                        <TableCell sx={{fontSize:"1.2em", textAlign:"center", color:"#95B2B8", textDecoration:"underline"}}>{product.productName}</TableCell>
+                                        <TableCell sx={{fontSize:"1.2em", textAlign:"center", color:"#95B2B8", textDecoration:"underline"}}>{product.productPrice}</TableCell>
+                                        <TableCell sx={{fontSize:"1.2em", textAlign:"center"}}><Button variant="contained" sx={{backgroundColor:"#8CB369"}} onClick={() => removeOrder(order._id)}>Remove Order</Button></TableCell>
+                                    </TableRow>
+                                ))
                         ))
-                        }
-                        <Button onClick={() => removeOrder(order._id)}>Remove order</Button>
-                    </div>
-                ))
-            }
+                    }
+                </TableBody>
+            </Table>
         </Box>
     );
 }

@@ -1,7 +1,7 @@
 'use client'
 import { Label } from "@mui/icons-material";
 import Link from "@mui/material/Link";
-import { Box, Breadcrumbs, Button, Divider, Stack, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Button, Divider, Stack, Typography, TableCell, TableRow, Table, TableHead, TableBody } from "@mui/material";
 import { useState, useEffect } from "react";
 import { checklogin } from "../api/checklogin/route.js";
 import { redirect } from "next/navigation.js";
@@ -54,40 +54,53 @@ export default function Cart() {
         )
     }
     return (
-        <Box>
+        <Box sx={{minHeight: "100vh", backgroundColor: "#120309ff"}}>
             {/* Top NavBar */}
-            <Stack direction="row" divider={<Divider orientation="vertical" flexItem/>} spacing={2} sx={{maxHeight: "10vh"}}>
-                <Box sx={{width: "33vw", justifyContent:"center", backgroundColor: "#a63d40ff"}}>
-                    <h1>{JSON.stringify(weather.temp)}</h1>
+            <Stack direction="row" divider={<Divider orientation="vertical" flexItem/>} spacing={2} sx={{maxHeight: "10vh", backgroundColor: "#a63d40ff"}}>
+                <Box sx={{width: "33vw", justifyContent:"center", backgroundColor: "#a63d40ff", color:"#8CB369", display:"flex", alignItems:"center"}}>
+                    <h1>Current Temperature: {JSON.stringify(weather.temp)}°C</h1>
                 </Box>
-                <Box sx={{width: "33vw", backgroundColor: "#a63d40ff"}}>
+                <Box sx={{width: "33vw", display:"flex", justifyContent:"center"}}>
                     <Breadcrumbs>
-                        <Link underline="hover" color="inherit" href="/">Home</Link>
-                        <Link underline="hover" color="inherit" href="/customer">Customer</Link>
-                        <Typography sx={{color: "#95b2b8ff"}}>View_cart</Typography>
+                        <Link underline="hover" color="inherit" href="/" sx={{fontSize: "1.6em", color:"#41521fff"}}>Home</Link>
+                        <Link underline="hover" color="inherit" href="/customer" sx={{fontSize: "1.6em", color:"#41521fff"}}>Products</Link>
+                        <Typography sx={{color: "#95b2b8ff", fontSize: "1.6em", color:"#8CB369"}}>Cart</Typography>
                     </Breadcrumbs>
                 </Box>
-                <Box sx={{width: "33vw", justifyContent:"center", backgroundColor: "#a63d40ff"}}>
-                    <h1>Cart</h1>
+                <Box sx={{width: "33vw", display:"flex", justifyContent:"center"}}>
+                    <Button variant="contained" sx={{fontSize: "1.2em", fontWeight: "bold", color:"#41521fff", backgroundColor:"#8CB369", width:"15vw"}} onClick={() => redirect("/view_cart")}>Go To Cart</Button>
                 </Box>
             </Stack>
             {/* Products */}
-            {
-                cart.map((item, i) => {
-                    return (
-                        <div key={i}>
-                            <br></br>
-                            {item.productName}
-                            -
-                            {item.productPrice}
-                            <br></br>
-                            <Button onClick={() => removeFromCart(item)}>Remove from cart</Button>
-                        </div>
-                    )
-                })
-            }
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{fontSize:"1.4em", fontWeight:"bold", textAlign:"center", color:"#A63D40", textDecoration:"underline"}}>Name</TableCell>
+                        <TableCell sx={{fontSize:"1.4em", fontWeight:"bold", textAlign:"center", color:"#A63D40", textDecoration:"underline"}}>Price</TableCell>
+                        <TableCell></TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {
+                        cart.map((item, i) => {
+                            return (
+                                <TableRow key={i} sx={{backgroundColor:"#41521F"}}>
+                                    <TableCell sx={{fontSize:"1.2em", textAlign:"center", color:"#95B2B8", textDecoration:"underline"}}>{item.productName}</TableCell>
+                                    <TableCell sx={{fontSize:"1.2em", textAlign:"center", color:"#95B2B8", textDecoration:"underline"}}>{item.productPrice}&euro;</TableCell>
+                                    <TableCell sx={{fontSize:"1.2em", textAlign:"center", color:"#95B2B8", textDecoration:"underline"}}>
+                                        <Button variant="contained" sx={{backgroundColor:"#8CB369"}} onClick={() => removeFromCart(item)}>Remove</Button>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })
+                    }
+                </TableBody>
+            </Table>
             {/* Checkout */}
-            <Button onClick={() => checkout()}>Checkout</Button>
+            <Box sx={{width: "100vw", display:"flex", justifyContent:"center", marginTop:"5vh"}}>
+                <Button variant="contained" sx={{backgroundColor:"#a63d40ff", width:"15vw", height:"8vh", fontSize:"1.4em", color:"#8CB369"}} onClick={() => checkout()}>Checkout</Button>
+            </Box>
+            
         </Box>
     );
 }
