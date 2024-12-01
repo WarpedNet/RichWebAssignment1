@@ -22,6 +22,21 @@ export default function Cart() {
         .then((cart) => {setcart(cart)})
     }, [])
 
+    function checkLogin() {
+        fetch("/api/checklogin")
+        .then((res) => res.json())
+        .then((res) => {
+            if (!res.isLoggedIn) {
+                console.log(res);
+                redirect("/");
+            }
+        });
+    }
+
+    useEffect(() => {
+        checkLogin();
+    }, [])
+
     async function removeFromCart(item) {
         await fetch(`/api/removeFromCart?productName=${item.productName}&productPrice=${item.productPrice}`);
         fetch("/api/getCart")
