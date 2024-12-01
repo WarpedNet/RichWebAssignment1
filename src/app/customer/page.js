@@ -4,6 +4,7 @@ import Link from "@mui/material/Link";
 import { Box, Breadcrumbs, Button, Divider, Stack, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
+import { checklogin } from "../api/checklogin/route";
 
 export default function Customer() {
     const [weather, setweather] = useState(0)
@@ -21,6 +22,18 @@ export default function Customer() {
       .then((products) => {setproducts(products)})
     
     }, [])
+    function checkLogin() {
+        fetch("/api/checklogin")
+        .then((res) => res.json())
+        .then((res) => {
+            if (!res.isLoggedIn) {
+                redirect("/");
+            }
+        });
+    }
+    useEffect(() => {
+        checkLogin();
+    }, [])
     
     function putInCart(item) {
         fetch(`/api/putInCart?productName=${item.productName}&productPrice=${item.productPrice}`);
@@ -36,6 +49,7 @@ export default function Customer() {
             <h1>Loading Weather...</h1>
         )
     }
+
     return (
         <Box>
             {/* Top NavBar */}

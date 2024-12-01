@@ -3,11 +3,12 @@ import { Label } from "@mui/icons-material";
 import Link from "@mui/material/Link";
 import { Box, Breadcrumbs, Button, Divider, Stack, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
+import { checklogin } from "../api/checklogin/route.js";
 
 export default function Cart() {
     const [weather, setweather] = useState(0)
     const [cart, setcart] = useState(null)
-
+    
     useEffect(() => {
         fetch("/api/weather")
         .then((res) => res.json())
@@ -25,6 +26,22 @@ export default function Cart() {
         fetch("/api/getCart")
         .then((res) => res.json())
         .then((cart) => {setcart(cart)})
+    }
+
+    async function checkout() {
+        if (cart) {
+            await fetch(`/api/checkout`, {
+                method: 'POST',
+                body: JSON.stringify(cart),
+            });
+            cart.map((item, i) => {
+                fetch(`/api/removeFromCart?productName=${item.productName}&productPrice=${item.productPrice}`);
+            });
+            fetch("/api/getCart")
+            .then((res) => res.json())
+            .then((cart) => {setcart(cart)})
+        }
+
     }
 
     if (!cart) {
@@ -70,6 +87,8 @@ export default function Cart() {
                     )
                 })
             }
+            {/* Checkout */}
+            <Button onClick={() => checkout()}>Checkout</Button>
         </Box>
     );
 }

@@ -3,17 +3,48 @@ import { Label } from "@mui/icons-material";
 import Link from "@mui/material/Link";
 import { Box, Breadcrumbs, Button, Divider, Stack, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
-
+import { checklogin } from "../api/checklogin/route.js";
+import { redirect } from "next/navigation.js";
 export default function Manager() {
+
     const [weather, setweather] = useState(0)
     const [orders, setorders] = useState(null)
+    
     useEffect(() => {
         fetch("/api/weather")
         .then((res) => res.json())
-        .then((weather) => {setWeatherData(weather)})
+        .then((weather) => {setweather(weather)})
     }, [])
+
+    useEffect(() => {
+        fetch("/api/getOrders", {method: 'POST'})
+        .then((res) => res.json())
+        .then((info) => setorders(info))
+    }, [])
+
+    function checkLogin() {
+        fetch("/api/checklogin")
+        .then((res) => res.json())
+        .then((res) => {
+            if (!res.isLoggedIn || res.role != "manager") {
+                console.log(res);
+                redirect("/");
+            }
+        });
+    }
+
+    useEffect(() => {
+        checkLogin();
+    }, [])
+
+    async function removeOrder(orderID) {
+        await fetch(`/api/removeOrder?orderID=${orderID}`);
+        await fetch("/api/getOrders", {method: 'POST'})
+        .then((res) => res.json())
+        .then((info) => setorders(info));
+    }
     
-    if (!products) {
+    if (!orders) {
         return (
             <h1>Loading Orders...</h1>
         )
@@ -42,15 +73,22 @@ export default function Manager() {
             </Stack>
             {/* Products */}
             {
-                products.map((item, i) => (
-                    <div key={i}>
-                        ID: {item._id}
+                orders.map((order, i) => (
+                    <div key={order._id}>
+                        ID: {order._id}
                         <br></br>
-                        {item.time}
-                        -
-                        {item.customerRef}
-                        <br></br>
-                        <Button>Add to cart</Button>
+                        {order.email}
+                        {(order.order).map((product, j) => (
+                            <div key={product._id}>
+                                ItemID: {product._id}
+                                <br></br>
+                                Name: {product.productName}
+                                <br></br>
+                                Price: {product.productPrice}
+                            </div>
+                        ))
+                        }
+                        <Button onClick={() => removeOrder(order._id)}>Remove order</Button>
                     </div>
                 ))
             }
