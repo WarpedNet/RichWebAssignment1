@@ -25,6 +25,9 @@ export async function GET(req, res) {
         "email":email
     }, {"_id": false, "email": true, "passwordhash": true, "role":true});
 
+    if (!dbLookup) {
+        return Response.json({"data": "invalid"});
+    }
     if (dbLookup["passwordhash"]) {
         const bcrypt = require('bcrypt');
 

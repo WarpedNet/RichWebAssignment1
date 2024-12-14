@@ -1,26 +1,50 @@
 'use client'
 import * as React from 'react';
 import { Label } from "@mui/icons-material";
-import { Box, Button, ButtonGroup, FormControl, FormLabel, TextField } from "@mui/material";
+import { Box, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormLabel, TextField } from "@mui/material";
 import { redirect } from 'next/navigation';
 import { useState } from 'react';
+import * as validator from 'email-validator';
 
 export default function Home() {
 
+  const [openDialog, setopenDialog] = useState(false);
+  const [errorTitle, seterrorTitle] = useState(false);
+  const [errorMSG, seterrorMSG] = useState(false);
+  const handleClose = () => {
+    setopenDialog(false);
+  }
   const handleSubmit = (e) => {
     console.log("login");
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     let email = data.get("email");
+    let isEmailValid = validator.validate(email);
     let password = data.get("password");
-  
-    runDBCallAsync(`/api/login?email=${email}&password=${password}`);
+    
+    if (isEmailValid && email.length != 0 && password.length != 0){
+      if (email.length > 120) {
+        seterrorTitle("Invalid Email");
+        seterrorMSG("Email Address provided is too long");
+        setopenDialog(true);
+      }
+      runDBCallAsync(`/api/login?email=${email}&password=${password}`);
+    }
+    else {
+      seterrorTitle("Invalid Email");
+      seterrorMSG("Email Address provided is Invalid");
+      setopenDialog(true);
+    }
   }
   async function runDBCallAsync(url) {
     const res = await fetch(url);
     const data = await res.json();
-
-    if (data.data == "valid" && data.password == "valid" && data.role == "manager"){
+    if (data.data == "invalid") {
+      seterrorTitle("Login Invalid");
+      seterrorMSG("Invalid Login Details");
+      setopenDialog(true);
+    }
+    else if (data.data == "valid" && data.password == "valid" && data.role == "manager"){
       redirect("/manager");
     }
     else {
@@ -41,6 +65,19 @@ export default function Home() {
           <Button sx={{color: "#a63d40ff", fontSize: "1em", fontWeight: "bold", borderColor:"#41521fff"}} onClick={() => redirect("/register")}>Register</Button>
         </ButtonGroup>
       </FormControl>
+      <Dialog open={openDialog} onClose={handleClose} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
+          <DialogTitle>
+            {errorTitle}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {errorMSG}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Close</Button>
+          </DialogActions>
+      </Dialog>
     </Box>
   );
 }

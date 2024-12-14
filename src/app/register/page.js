@@ -1,25 +1,49 @@
 'use client'
 import * as React from 'react';
 import { useState } from 'react';
-import { Box, Button, ButtonGroup, FormControl, FormLabel, TextField } from "@mui/material";
+import { Box, Button, ButtonGroup, FormControl, FormLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { useRouter } from 'next/navigation';
 import { Snackbar } from '@mui/base/Snackbar';
+import * as validator from 'email-validator';
 
 export default function Register() {
   const router = useRouter();
   const [registration, setregistration] = useState(null);
-
+  const [openDialog, setopenDialog] = useState(false);
+  const [errorTitle, seterrorTitle] = useState(false);
+  const [errorMSG, seterrorMSG] = useState(false);
+  const handleClose = () => {
+    setopenDialog(false);
+  }
   const handleSubmit = (e) => {
     console.log("login");
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     let email = data.get("email");
     let emailConfirm = data.get("emailConfirm")
+    let emailValid = validator.validate(email);
     let password = data.get("password");
     let passwordConfirm = data.get("passwordConfirm");
     let phonenum = data.get("phonenum");
 
-    runDBCallAsync(`/api/register?email=${email}&emailconfirm=${emailConfirm}&password=${password}&passwordconfirm=${passwordConfirm}&phonenum=${phonenum}`);
+    if (email.length > 120) {
+      seterrorTitle("Invalid Email");
+      seterrorMSG("Email address is too long");
+      setopenDialog(true);
+    }
+    if (password.length < 5) {
+      seterrorTitle("Invalid Password");
+      seterrorMSG("Password is too short");
+      setopenDialog(true);
+    }
+    if (emailValid && email.length > 0) {
+      runDBCallAsync(`/api/register?email=${email}&emailconfirm=${emailConfirm}&password=${password}&passwordconfirm=${passwordConfirm}&phonenum=${phonenum}`);
+    }
+    else {
+      seterrorTitle("Invalid Email");
+      seterrorMSG("Email Address Provided is Invalid")
+      setopenDialog(true);
+    }
   }
 
   async function runDBCallAsync(url) {
@@ -51,6 +75,19 @@ export default function Register() {
         </ButtonGroup>
 
       </FormControl>
+      <Dialog open={openDialog} onClose={handleClose} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
+          <DialogTitle>
+            {errorTitle}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {errorMSG}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Close</Button>
+          </DialogActions>
+      </Dialog>
     </Box>
     
   );
