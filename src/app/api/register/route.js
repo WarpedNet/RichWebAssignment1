@@ -2,19 +2,21 @@
 import { getSession } from "../session.js";
 import { redirect } from 'next/navigation';
 import * as bcrypt from "bcrypt"
+import * as validator from 'email-validator';
 
 export async function GET(req, res) {
-
+    var jsesc = require("jsesc");
     console.log("In Register api")
 
     const { searchParams } = new URL(req.url)
-    const email = searchParams.get('email')
+    const email = searchParams.get('email');
     const emailconfirm = searchParams.get('emailconfirm');
-    const password = searchParams.get('password');
-    const passwordConfirm = searchParams.get('passwordconfirm');
-    const phonenum = searchParams.get('phonenum');
+    const emailValid = validator.validate(email) && validator.validate(emailconfirm);
+    const password = jsesc(searchParams.get('password'));
+    const passwordConfirm = jsesc(searchParams.get('passwordconfirm'));
+    const phonenum = jsesc(searchParams.get('phonenum'));
 
-    if (email != emailconfirm || password != passwordConfirm) {
+    if (!emailValid || email != emailconfirm || password != passwordConfirm) {
         return Response.json({ data:"invalid", registration: "invalid"})
     }
 
@@ -26,11 +28,13 @@ export async function GET(req, res) {
     console.log("Connected to Database");
     const db = client.db("krispykreme");
     const collection = db.collection("users");
+
     let dupeEmail = collection.findOne({
         "email": email
     }, {email: true});
     console.log(dupeEmail.email == undefined)
-    if (dupeEmail.email != undefined) {
+
+    if (dupeEmail.email == undefined) {
         return Response.json({data: "invalid", registration:"invalid"});
     }
     // Hashing password & inserting data into database

@@ -19,7 +19,7 @@ export default function Register() {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     let email = data.get("email");
-    let emailConfirm = data.get("emailConfirm")
+    let emailConfirm = data.get("emailConfirm");
     let emailValid = validator.validate(email);
     let password = data.get("password");
     let passwordConfirm = data.get("passwordConfirm");

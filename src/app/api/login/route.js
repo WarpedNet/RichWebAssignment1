@@ -1,14 +1,19 @@
 'use server'
 import { revalidatePath } from "next/cache.js";
 import { getSession } from "../session.js";
+import { validate } from "email-validator";
 
 export async function GET(req, res) {
+    var jsesc = require("jsesc");
 
     console.log("In Login api")
 
     const { searchParams } = new URL(req.url)
-    const email = searchParams.get('email')
-    const password = searchParams.get('password');
+    const email = searchParams.get('email');
+    if (!email) {
+        return Response.json({data: "invalid"}); 
+    }
+    const password = jsesc(searchParams.get('password'));
     console.log(email);
     console.log(password);
 
