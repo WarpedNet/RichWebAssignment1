@@ -48,6 +48,7 @@ export default function Register() {
   async function runDBCallAsync(url) {
     const res = await fetch(url);
     const data = await res.json();
+    console.log(data);
     if (data.data == "valid" && data.registration == "valid") {
       redirect("/");
     }

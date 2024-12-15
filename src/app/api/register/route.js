@@ -1,6 +1,7 @@
 'use server'
 import { getSession } from "../session.js";
 import { redirect } from 'next/navigation';
+import * as bcrypt from "bcrypt"
 
 export async function GET(req, res) {
 
@@ -14,7 +15,7 @@ export async function GET(req, res) {
     const phonenum = searchParams.get('phonenum');
 
     if (email != emailconfirm || password != passwordConfirm) {
-        return Response.json({ "data":"Invalid"})
+        return Response.json({ data:"invalid", registration: "invalid"})
     }
 
     const url = process.env.DB_ADDRESS
@@ -25,37 +26,31 @@ export async function GET(req, res) {
     console.log("Connected to Database");
     const db = client.db("krispykreme");
     const collection = db.collection("users");
-
     let dupeEmail = collection.findOne({
         "email": email
-    });
-    if (dupeEmail) {
-        return Response.json({data: "Invalid", registration:"invalid"});
+    }, {email: true});
+    console.log(dupeEmail.email == undefined)
+    if (dupeEmail.email != undefined) {
+        return Response.json({data: "invalid", registration:"invalid"});
     }
     // Hashing password & inserting data into database
-    const bcrypt = require('bcrypt');
-    bcrypt.hash(password, 10, async function(err, hash) {
-        const insert = collection.insertOne({
-            "email": email,
-            "passwordhash": hash,
-            "phonenum": phonenum,
-            "role": "customer"
-        })
-        if (insert) {
-            let session = await getSession();
-            session.email = email;
-            session.isLoggedIn = true;
-            session.role = "customer";
-            await session.save();
-
-            return Response.json({ data:"valid", registration:"valid" })
-        }
-        else {
-            return Response.json({ data:"valid", registration:"invalid"})
-        }
-
+    let hash = await bcrypt.hash(password, 10)
+    const insert = collection.insertOne({
+        "email": email,
+        "passwordhash": hash,
+        "phonenum": phonenum,
+        "role": "customer"
     })
+    if (insert) {
+        let session = await getSession();
+        session.email = email;
+        session.isLoggedIn = true;
+        session.role = "customer";
+        await session.save()
 
-
-    return Response.json({ data:"Invalid" })
+        return Response.json({ data:"valid", registration:"valid" })
+    }
+    else {
+        return Response.json({ data:"valid", registration:"invalid"})
+    }
 }
