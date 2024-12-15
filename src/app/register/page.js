@@ -48,13 +48,14 @@ export default function Register() {
   async function runDBCallAsync(url) {
     const res = await fetch(url);
     const data = await res.json();
-    if (data.data != "valid" || data.registration != "valid") {
+    if (data.data == "valid" && data.registration == "valid") {
+      redirect("/");
+    }
+    else {
+      
       seterrorTitle("Invalid Details");
       seterrorMSG("Invalid registration details");
       setopenDialog(true);
-    }
-    else {
-      redirect("/");
     }
   }
 
