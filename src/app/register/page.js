@@ -2,13 +2,12 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { Box, Button, ButtonGroup, FormControl, FormLabel, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { Snackbar } from '@mui/base/Snackbar';
 import * as validator from 'email-validator';
 
 export default function Register() {
   const router = useRouter();
-  const [registration, setregistration] = useState(null);
   const [openDialog, setopenDialog] = useState(false);
   const [errorTitle, seterrorTitle] = useState(false);
   const [errorMSG, seterrorMSG] = useState(false);
@@ -49,11 +48,13 @@ export default function Register() {
   async function runDBCallAsync(url) {
     const res = await fetch(url);
     const data = await res.json();
-    if (data.data != "valid") {
-      setregistration(true);
+    if (data.data != "valid" || data.registration != "valid") {
+      seterrorTitle("Invalid Details");
+      seterrorMSG("Invalid registration details");
+      setopenDialog(true);
     }
     else {
-      setregistration(false);
+      redirect("/");
     }
   }
 

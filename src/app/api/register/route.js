@@ -26,6 +26,12 @@ export async function GET(req, res) {
     const db = client.db("krispykreme");
     const collection = db.collection("users");
 
+    let dupeEmail = collection.findOne({
+        "email": email
+    });
+    if (dupeEmail) {
+        return Response.json({data: "Invalid", registration:"invalid"});
+    }
     // Hashing password & inserting data into database
     const bcrypt = require('bcrypt');
     bcrypt.hash(password, 10, async function(err, hash) {
@@ -42,14 +48,14 @@ export async function GET(req, res) {
             session.role = "customer";
             await session.save();
 
-            return Response.json({ "data":"valid", "registration":"valid" })
+            return Response.json({ data:"valid", registration:"valid" })
         }
         else {
-            return Response.json({ "data":"valid", "registration":"invalid"})
+            return Response.json({ data:"valid", registration:"invalid"})
         }
 
     })
 
 
-    return Response.json({ "data":"Invalid" })
+    return Response.json({ data:"Invalid" })
 }
