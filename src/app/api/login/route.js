@@ -26,7 +26,7 @@ export async function GET(req, res) {
     }, {"_id": false, "email": true, "passwordhash": true, "role":true});
 
     if (!dbLookup) {
-        return Response.json({"data": "invalid"});
+        return Response.json({data: "invalid"});
     }
     if (dbLookup["passwordhash"]) {
         const bcrypt = require('bcrypt');
@@ -43,18 +43,18 @@ export async function GET(req, res) {
             await session.save();
 
             if (role == "manager") {
-                return Response.json({ "data":"valid", "password":"valid", "role":"manager"});
+                return Response.json({ data:"valid", password:"valid", role:"manager"});
             }
             else {
-                return Response.json({ "data":"valid", "password":"valid", "role":"customer"});
+                return Response.json({ data:"valid", password:"valid", role:"customer"});
             }
         }
         else {
-            return Response.json({ "data":"valid", "password":"invalid" });
+            return Response.json({ data:"valid", password:"invalid" });
         }
     }
     else {
-        return Response.json({ "data":"invalid" });
+        return Response.json({ data:"invalid" });
     }
     
     

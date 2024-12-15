@@ -39,16 +39,16 @@ export default function Home() {
   async function runDBCallAsync(url) {
     const res = await fetch(url);
     const data = await res.json();
-    if (data.data == "invalid") {
+    if (data.data == "valid" && data.password == "valid" && data.role == "manager"){
+      redirect("/manager");
+    }
+    else if (data.data == "valid" && data.password == "valid" && data.role == "customer"){
+      redirect("/customer");
+    }
+    else {
       seterrorTitle("Login Invalid");
       seterrorMSG("Invalid Login Details");
       setopenDialog(true);
-    }
-    else if (data.data == "valid" && data.password == "valid" && data.role == "manager"){
-      redirect("/manager");
-    }
-    else {
-      redirect("/customer");
     }
   }
   
