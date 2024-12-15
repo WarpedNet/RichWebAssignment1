@@ -15,7 +15,6 @@ export async function GET(req, res) {
     const password = jsesc(searchParams.get('password'));
     const passwordConfirm = jsesc(searchParams.get('passwordconfirm'));
     const phonenum = jsesc(searchParams.get('phonenum'));
-
     if (!emailValid || email != emailconfirm || password != passwordConfirm) {
         return Response.json({ data:"invalid", registration: "invalid"})
     }
@@ -29,12 +28,10 @@ export async function GET(req, res) {
     const db = client.db("krispykreme");
     const collection = db.collection("users");
 
-    let dupeEmail = collection.findOne({
+    let dupeEmail = await collection.findOne({
         "email": email
     }, {email: true});
-    console.log(dupeEmail.email == undefined)
-
-    if (dupeEmail.email == undefined) {
+    if (await dupeEmail != null) {
         return Response.json({data: "invalid", registration:"invalid"});
     }
     // Hashing password & inserting data into database
